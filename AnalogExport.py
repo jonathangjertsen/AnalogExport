@@ -1,3 +1,4 @@
+from hashlib import md5
 import math
 import time
 import os
@@ -28,11 +29,28 @@ class AnalogExport(AnalogMeasurer):
                 "exp_status": -1,
             }
         try:
+            total_data = np.concatenate(self.batches)
+            data_hash = md5(total_data).hexdigest()
             measurement_taken = int(time.time())
-            storage_dir = Path.home() / "SaleaeAnalogExport"
+            base_dir = Path.home() / "SaleaeAnalogExport"
+
+            # Avoid re-calculating all the time. If the hash exists, return now.
+            hash_dir = base_dir / "hashes"
+            hash_dir.mkdir(parents=True, exist_ok=True)
+            if (hash_dir / data_hash).is_file():
+                return {
+                    "exp_hint": measurement_taken,
+                    "exp_status": -2,
+                }
+            else:
+                with open(str(hash_dir / data_hash), "w") as hash_file:
+                    pass
+
+            # Store
+            storage_dir = base_dir / "data"
             storage_dir.mkdir(parents=True, exist_ok=True)
             filename = str(storage_dir / "{}.txt.gz".format(measurement_taken))
-            np.savetxt(filename, np.concatenate(self.batches))
+            np.savetxt(filename, total_data)
             return {
                 "exp_hint": measurement_taken,
                 "exp_status": 0,
