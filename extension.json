@@ -1,0 +1,23 @@
+{
+  "name": "Analog Export",
+  "apiVersion": "1.0.0",
+  "author": "Jonathan Reichelt Gjertsen",
+  "version": "1.0.0",
+  "description": "Exports analog measurements to \"CSV\", that is, one row of data per sample. Please see README.md for caveats!",
+  "extensions": {
+    "Analog Export": {
+      "type": "AnalogMeasurement",
+      "entryPoint": "AnalogExport.AnalogExport",
+      "metrics": {
+        "exp_hint": {
+          "name": "Export hint",
+          "notation": "exp_hint"
+        },
+        "exp_status": {
+          "name": "Export status",
+          "notation": "exp_status"
+        }
+      }
+    }
+  }
+}
